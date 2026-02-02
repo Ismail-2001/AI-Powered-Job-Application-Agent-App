@@ -25,6 +25,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(255), nullable=True)
     google_api_key = db.Column(db.String(255))
     deepseek_api_key = db.Column(db.String(255))
+    linkedin_url = db.Column(db.String(512))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships

@@ -142,6 +142,21 @@
                 <input type="text" name="name" id="name"
                     value="{{ profile.personal_info.name if profile.personal_info else '' }}" placeholder="John Doe">
             </div>
+
+            <div class="section-title">LinkedIn Integration</div>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">Connect your LinkedIn profile to sync
+                professional data.</p>
+            <div class="form-group">
+                <label>LinkedIn Profile URL</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="url" name="linkedin_url" id="linkedin_url" value="{{ user.linkedin_url or '' }}"
+                        placeholder="https://www.linkedin.com/in/username">
+                    <button type="button" class="btn" style="white-space: nowrap; width: auto; padding: 0 1rem;"
+                        onclick="openLinkedInModal()">Sync Profile</button>
+                </div>
+            </div>
+
+            <div class="section-title">Contact & Location</div>
             <div class="form-group">
                 <label>Email Address</label>
                 <input type="email" name="email" id="email"
@@ -208,7 +223,82 @@
         </form>
     </div>
 
+    <!-- LinkedIn Sync Modal -->
+    <div id="linkedinModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div
+            style="background:white; padding:2rem; border-radius:1rem; max-width:600px; width:90%; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <h2 style="margin:0; font-size:1.5rem;">Sync LinkedIn Profile</h2>
+                <button type="button" onclick="closeLinkedInModal()"
+                    style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            <p style="font-size:0.9rem; color:#666; margin-bottom:1.5rem;">
+                Due to LinkedIn's privacy restrictions, we use <strong>AI Parsing</strong> for the best accuracy.
+                <br><br>
+                1. Open your <a id="linkedinLink" href="#" target="_blank"
+                    style="color:#4F46E5; font-weight:600;">LinkedIn Profile</a>.
+                <br>2. Press <strong>Ctrl+A</strong> (Select All) and <strong>Ctrl+C</strong> (Copy).
+                <br>3. Paste the content into the box below and click <strong>Extract with AI</strong>.
+            </p>
+            <textarea id="linkedinText"
+                style="width:100%; height:200px; padding:1rem; border:1px solid #E5E7EB; border-radius:0.5rem; font-size:0.85rem; margin-bottom:1rem;"
+                placeholder="Paste profile content here..."></button>
+            <div style="display:flex; justify-content:flex-end; gap:1rem;">
+                <button type="button" class="btn" style="background:#F3F4F6; color:#374151;" onclick="closeLinkedInModal()">Cancel</button>
+                <button type="button" class="btn" id="linkedinParseBtn" onclick="parseLinkedIn()">Extract with AI Agent</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openLinkedInModal() {
+            const url = document.getElementById('linkedin_url').value;
+            if (!url) {
+                alert('Please enter your LinkedIn URL first.');
+                return;
+            }
+            document.getElementById('linkedinLink').href = url;
+            document.getElementById('linkedinModal').style.display = 'flex';
+        }
+
+        function closeLinkedInModal() {
+            document.getElementById('linkedinModal').style.display = 'none';
+        }
+
+        async function parseLinkedIn() {
+            const text = document.getElementById('linkedinText').value.trim();
+            if (!text) {
+                alert('Please paste some content first.');
+                return;
+            }
+
+            const btn = document.getElementById('linkedinParseBtn');
+            btn.disabled = true;
+            btn.textContent = 'AI Agent is Parsing...';
+
+            try {
+                const response = await fetch('/api/profile/linkedin/parse', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('LinkedIn profile successfully parsed and synced! 🚀');
+                    window.location.reload(); // Reload to show new values
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (err) {
+                alert('Network error: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Extract with AI Agent';
+            }
+        }
+
         // Resume Upload Handler
         document.getElementById('resumeUpload').addEventListener('change', async (e) => {
             const file = e.target.files[0];

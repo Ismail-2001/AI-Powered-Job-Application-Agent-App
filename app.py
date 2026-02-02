@@ -175,6 +175,7 @@ def update_profile():
         user = User.query.get(current_user.id)
         if google_key is not None: user.google_api_key = google_key
         if deepseek_key is not None: user.deepseek_api_key = deepseek_key
+        if data.get('linkedin_url') is not None: user.linkedin_url = data.get('linkedin_url')
         
         db.session.commit()
         return jsonify({'success': True})
@@ -261,6 +262,66 @@ def authorize_google():
     except Exception as e:
         flash(f"Google Login Failed: {str(e)}", "error")
         return redirect(url_for('login'))
+
+@app.route('/api/profile/linkedin/parse', methods=['POST'])
+@login_required
+def parse_linkedin_profile():
+    """Parse pasted LinkedIn profile text using AI."""
+    try:
+        data = request.json
+        raw_text = data.get('text', '').strip()
+        
+        if not raw_text or len(raw_text) < 100:
+            return jsonify({'success': False, 'error': 'Please paste a fallback of your LinkedIn profile content (min 100 chars).'}), 400
+
+        user = User.query.get(current_user.id)
+        api_key = user.deepseek_api_key or os.getenv("DEEPSEEK_API_KEY")
+        if not api_key:
+            return jsonify({'success': False, 'error': 'DeepSeek API Key required in Profile.'}), 400
+            
+        ai_client = DeepSeekClient(api_key=api_key)
+        
+        # We can reuse the prompt logic from ResumeParser or define a specific one here
+        system_prompt = """
+        You are an expert LinkedIn Profile Parser. You will receive raw text copied from a LinkedIn profile page.
+        Your goal is to extract the professional data and return it in a structured JSON format.
+        
+        Output format:
+        {
+            "personal_info": { "name": "", "email": "", "phone": "", "location": "" },
+            "summary": "About section...",
+            "experience": [
+                { "title": "", "company": "", "duration": "", "description": ["bullet points"] }
+            ],
+            "education": [
+                { "degree": "", "school": "", "year": "" }
+            ],
+            "skills": { "Technical": ["Skill 1", "Skill 2"] }
+        }
+        
+        Rules:
+        1. Be extremely thorough with the 'Experience' and 'About' sections.
+        2. Clean up any weird formatting from the copy-paste.
+        3. Maintain bullet points for experience descriptions.
+        """
+        
+        prompt = f"Extract professional profile data from this LinkedIn text:\n\n{raw_text}"
+        
+        structured_data = ai_client.generate_json(prompt, system_prompt)
+        
+        # Update profile immediately
+        from models import Profile, db
+        profile = Profile.get_or_create_for_user(current_user.id)
+        profile.update_from_dict(structured_data)
+        
+        return jsonify({
+            'success': True,
+            'message': 'LinkedIn profile successfully parsed!',
+            'profile': structured_data
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/process', methods=['POST'])
 @login_required
