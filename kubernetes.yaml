@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: job-agent
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-secrets
+  namespace: job-agent
+type: Opaque
+data:
+  # Base64 encoded DEEPSEEK_API_KEY (User needs to replace this)
+  DEEPSEEK_API_KEY: ReplaceMeWithBase64EncodedKey
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-agent-api
+  namespace: job-agent
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: job-agent-api
+  template:
+    metadata:
+      labels:
+        app: job-agent-api
+    spec:
+      containers:
+      - name: api
+        image: ismailsajid/job-agent-api:latest  # Placeholder, user would build/push this
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DEEPSEEK_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: DEEPSEEK_API_KEY
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "0.2"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: job-agent-api-service
+  namespace: job-agent
+spec:
+  selector:
+    app: job-agent-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-agent-web
+  namespace: job-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: job-agent-web
+  template:
+    metadata:
+      labels:
+        app: job-agent-web
+    spec:
+      containers:
+      - name: web
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: web-content
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: web-content
+        hostPath:
+          path: /path/to/your/web/folder # Local path or use ConfigMap/PVC in production
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: job-agent-web-service
+  namespace: job-agent
+spec:
+  selector:
+    app: job-agent-web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
