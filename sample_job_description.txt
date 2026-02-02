@@ -1,0 +1,25 @@
+Senior Python Developer
+Location: Remote
+Company: FutureTech AI
+
+About Us:
+FutureTech AI is leading the revolution in autonomous agents. We are looking for a Senior Python Developer to join our core infrastructure team.
+
+Responsibilities:
+- Build and maintain high-performance REST APIs using FastAPI.
+- Design and implement multi-agent systems using LangChain or similar frameworks.
+- Optimize database queries for PostgreSQL and Redis.
+- Write clean, testable, and efficient code in Python 3.10+.
+- Collaborate with data scientists to integrate LLM models into production.
+
+Requirements:
+- 5+ years of experience with Python.
+- Strong knowledge of asynchronous programming (asyncio).
+- Experience with Docker and Kubernetes.
+- Familiarity with Cloud platforms (AWS/GCP).
+- Experience with OpenAI API or other LLMs is a huge plus.
+- Bachelor's degree in Computer Science or equivalent.
+
+Nice to have:
+- Open source contributions.
+- Experience with Vector Databases (Pinecone, Weaviate).

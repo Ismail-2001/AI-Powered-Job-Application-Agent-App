@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: job-agent-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./output:/app/output
+      - ./data:/app/data
+    restart: always
+
+  frontend:
+    image: nginx:alpine
+    container_name: job-agent-web
+    ports:
+      - "3000:80"
+    volumes:
+      - ./web:/usr/share/nginx/html
+    depends_on:
+      - api
+    restart: always
+
+networks:
+  default:
+    name: job-agent-network

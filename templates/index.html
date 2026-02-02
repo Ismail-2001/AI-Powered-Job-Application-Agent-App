@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Job Application Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .results.active {
+            display: block;
+        }
+        
+        .match-score {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+        
+        .file-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .file-link {
+            background: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+        
+        .file-link:hover {
+            background: #218838;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .profile-info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-info strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 AI-Powered Job Application Agent</h1>
+            <p>Automatically generate customized CVs and cover letters</p>
+        </div>
+        
+        <div class="content">
+            {% if profile %}
+            <div class="profile-info">
+                <strong>📋 Current Profile:</strong> {{ profile.personal_info.name }} 
+                <span style="color: #666;">|</span> 
+                <strong>Email:</strong> {{ profile.personal_info.email }}
+            </div>
+            {% endif %}
+            
+            <div id="alert-container"></div>
+            
+            <div class="section">
+                <h2>📝 Job Description</h2>
+                <textarea id="job-description" placeholder="Paste the job description here...&#10;&#10;Example:&#10;Senior Python Developer&#10;Location: Remote&#10;Company: FutureTech AI&#10;&#10;Requirements:&#10;- 5+ years of experience with Python&#10;- Strong knowledge of FastAPI&#10;- Experience with Docker and Kubernetes"></textarea>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="btn" id="process-btn" onclick="processJob()">
+                    🔍 Analyze & Generate CV
+                </button>
+                <button class="btn btn-secondary" onclick="clearForm()">
+                    🗑️ Clear
+                </button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing your job application... This may take 20-30 seconds.</p>
+            </div>
+            
+            <div class="results" id="results">
+                <h2>✅ Results</h2>
+                
+                <div class="match-score" id="match-score-section">
+                    <h3>📊 Match Score Analysis</h3>
+                    <div class="score-circle" id="score-circle">
+                        <span id="score-value">0</span>
+                    </div>
+                    <div id="match-details"></div>
+                </div>
+                
+                <div>
+                    <h3>📄 Generated Documents</h3>
+                    <div class="file-links" id="file-links">
+                        <!-- Files will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alert-container');
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+        
+        function processJob() {
+            const jobDescription = document.getElementById('job-description').value.trim();
+            
+            if (!jobDescription || jobDescription.length < 50) {
+                showAlert('Please enter a job description (at least 50 characters)', 'error');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('process-btn').disabled = true;
+            
+            // Make API call
+            fetch('/api/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    job_description: jobDescription
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('process-btn').disabled = false;
+                
+                if (data.success) {
+                    displayResults(data);
+                    showAlert('✅ CV and Cover Letter generated successfully!', 'success');
+                } else {
+                    showAlert('❌ Error: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('process-btn').disabled = false;
+                showAlert('❌ Network error: ' + error.message, 'error');
+            });
+        }
+        
+        function displayResults(data) {
+            // Display match score
+            const score = data.match_score.overall_score;
+            document.getElementById('score-value').textContent = Math.round(score);
+            
+            // Update score circle color based on score
+            const circle = document.getElementById('score-circle');
+            if (score >= 70) {
+                circle.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+            } else if (score >= 50) {
+                circle.style.background = 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)';
+            } else {
+                circle.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
+            }
+            
+            // Display match details
+            const details = `
+                <p><strong>Required Skills:</strong> ${data.match_score.required_skills_matched}/${data.match_score.required_skills_total} matched</p>
+                <p><strong>Nice-to-Have Skills:</strong> ${data.match_score.nice_to_have_matched}/${data.match_score.nice_to_have_total} matched</p>
+                <p><strong>Keywords:</strong> ${data.match_score.keywords_matched}/${data.match_score.keywords_total} matched</p>
+                <p><strong>Role:</strong> ${data.role_title} at ${data.company}</p>
+            `;
+            document.getElementById('match-details').innerHTML = details;
+            
+            // Display file links
+            const fileLinks = document.getElementById('file-links');
+            fileLinks.innerHTML = `
+                <a href="/api/download/${data.cv_file}" class="file-link" download>
+                    📄 Download CV
+                </a>
+                <a href="/api/download/${data.cover_letter_file}" class="file-link" download>
+                    ✍️ Download Cover Letter
+                </a>
+            `;
+            
+            // Show results
+            document.getElementById('results').classList.add('active');
+            
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function clearForm() {
+            document.getElementById('job-description').value = '';
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('alert-container').innerHTML = '';
+        }
+        
+        // Allow Enter key to submit (Ctrl+Enter)
+        document.getElementById('job-description').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                processJob();
+            }
+        });
+    </script>
+</body>
+</html>

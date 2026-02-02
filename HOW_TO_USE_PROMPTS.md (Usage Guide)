@@ -1,0 +1,482 @@
+# 🎯 How to Use System Prompts in AI-Powered IDEs
+
+This guide explains how to use the three system prompt files we've created for maximum productivity when working on the AI Job Application Agent project.
+
+---
+
+## 📁 Which Prompt File to Use?
+
+We've created three versions for different use cases:
+
+| File | Best For | Length |
+|------|----------|--------|
+| **SYSTEM_PROMPT_FOR_IDE.md** | Deep learning, reference, comprehensive understanding | Full (15+ pages) |
+| **SYSTEM_PROMPT_QUICK.md** | Quick reference, daily use, fast context loading | Medium (5 pages) |
+| **CURSOR_WINDSURF_PROMPT.txt** | Immediate use in Cursor/Windsurf chat | Short (3 pages) |
+
+---
+
+## 🚀 Setup Instructions by IDE
+
+### **Cursor IDE**
+
+#### Method 1: Project Instructions (.cursorrules)
+```bash
+# 1. Create .cursorrules file in project root
+cd job-application-agent
+touch .cursorrules
+
+# 2. Copy content from CURSOR_WINDSURF_PROMPT.txt
+cat CURSOR_WINDSURF_PROMPT.txt > .cursorrules
+
+# 3. Restart Cursor
+# Cursor will automatically load this context for the project
+```
+
+#### Method 2: Chat Context (Per Session)
+```
+1. Open Cursor AI chat (Cmd/Ctrl + L)
+2. Click the "+" button to add context
+3. Select "Add instructions for this chat"
+4. Paste content from CURSOR_WINDSURF_PROMPT.txt
+5. Start chatting!
+```
+
+#### Method 3: Composer Mode
+```
+1. Open Composer (Cmd/Ctrl + I)
+2. At the top of your prompt, paste:
+   "Context: [paste SYSTEM_PROMPT_QUICK.md content]"
+3. Then add your specific request
+```
+
+---
+
+### **Windsurf (Codeium)**
+
+#### Method 1: Cascade Rules
+```bash
+# 1. Create .windsurfrules file in project root
+cd job-application-agent
+touch .windsurfrules
+
+# 2. Copy content from CURSOR_WINDSURF_PROMPT.txt
+cat CURSOR_WINDSURF_PROMPT.txt > .windsurfrules
+
+# 3. Windsurf will auto-load these rules
+```
+
+#### Method 2: Flow Mode
+```
+1. Open Flow panel (AI assistant)
+2. Click settings/context icon
+3. Add project context
+4. Paste CURSOR_WINDSURF_PROMPT.txt
+5. This context will persist for the session
+```
+
+---
+
+### **GitHub Copilot Chat**
+
+```
+1. Open Copilot Chat panel
+2. At the start of your session, send a message:
+   "Context for this project: [paste SYSTEM_PROMPT_QUICK.md]"
+3. Then ask: "Do you understand the project context?"
+4. Wait for confirmation
+5. Start asking questions!
+
+Note: You'll need to provide context each session
+```
+
+---
+
+### **Bolt.new / StackBlitz**
+
+```
+1. When starting a new project or chat:
+2. In the prompt box, paste:
+   "I'm working on [project description]. Here's the system context:
+   [paste CURSOR_WINDSURF_PROMPT.txt]
+   
+   Now please help me with: [your specific request]"
+
+3. For subsequent messages in same session, just ask normally
+```
+
+---
+
+### **Claude (claude.ai)**
+
+```
+1. Start a new project or conversation
+2. First message should be:
+   "I'm working on an AI Job Application Agent project. 
+   Here's the technical context: [paste SYSTEM_PROMPT_QUICK.md]
+   
+   Please acknowledge you understand the project."
+
+3. Wait for acknowledgment
+4. Continue with specific requests
+
+Note: Use Project Knowledge feature if available to persist context
+```
+
+---
+
+### **ChatGPT with Code Interpreter**
+
+```
+1. Start conversation
+2. Upload SYSTEM_PROMPT_FOR_IDE.md as a file
+3. Say: "Please read this file and understand the project context"
+4. Wait for confirmation
+5. Start asking questions
+
+Tip: You can also upload your project files for analysis
+```
+
+---
+
+## 💡 Best Practices for Each IDE
+
+### **Cursor (Recommended for this project)**
+
+**Why it's best:**
+- Native .cursorrules support
+- Excellent at following system prompts
+- Great multi-file editing
+- Strong Python support
+
+**Optimal workflow:**
+```
+1. Setup: Add CURSOR_WINDSURF_PROMPT.txt to .cursorrules
+2. Daily use: Just open files and ask in chat
+3. Big changes: Use Composer mode with full context
+4. Review: Always review AI suggestions before accepting
+```
+
+---
+
+### **Windsurf**
+
+**Why it's great:**
+- Beautiful Cascade (multi-agent) system
+- Excellent for complex refactoring
+- Great at understanding project structure
+
+**Optimal workflow:**
+```
+1. Setup: .windsurfrules with CURSOR_WINDSURF_PROMPT.txt
+2. Use Flow for quick questions
+3. Use Cascade for multi-file changes
+4. Review diffs carefully
+```
+
+---
+
+### **GitHub Copilot**
+
+**Good for:**
+- Line-by-line coding
+- Autocomplete with context
+- Quick function implementations
+
+**Limitations:**
+- Less persistent context
+- Need to provide context each session
+
+**Optimal workflow:**
+```
+1. Paste SYSTEM_PROMPT_QUICK.md at session start
+2. Use inline suggestions for boilerplate
+3. Use chat for architecture questions
+4. Reference specific files when asking
+```
+
+---
+
+## 🎯 Practical Usage Examples
+
+### Example 1: Adding a New Feature
+
+**In Cursor/Windsurf:**
+```
+You: "I want to add a cover letter generator that creates 
+personalized cover letters based on the job analysis and CV. 
+Can you help?"
+
+AI: [Will use system prompt context to:]
+- Follow the agent architecture pattern
+- Use proper prompt engineering
+- Include error handling
+- Add type hints and docstrings
+- Provide production-ready code
+```
+
+### Example 2: Debugging an Issue
+
+**In any IDE with context loaded:**
+```
+You: "The JSON parsing is failing for some job descriptions. 
+How can I make it more robust?"
+
+AI: [Will suggest:]
+- Proper JSON cleaning
+- Better error messages
+- Fallback parsing strategies
+- All following the error handling patterns from system prompt
+```
+
+### Example 3: Improving Prompts
+
+**With context:**
+```
+You: "The job analyzer sometimes misses required skills. 
+How can I improve the prompt?"
+
+AI: [Will help you:]
+- Follow the PERFECT PROMPT formula
+- Add specific examples
+- Improve the critical rules section
+- Test incrementally
+```
+
+---
+
+## 📊 Context Token Management
+
+### Token Limits by IDE
+- **Cursor**: ~100K tokens context
+- **Windsurf**: ~200K tokens context  
+- **Copilot**: ~8K tokens context
+- **Claude**: ~200K tokens context
+- **ChatGPT**: ~128K tokens context
+
+### Which Prompt to Use Based on Limits
+
+**Large context (100K+):**
+→ Use SYSTEM_PROMPT_FOR_IDE.md (full version)
+
+**Medium context (30K-100K):**
+→ Use SYSTEM_PROMPT_QUICK.md (condensed)
+
+**Small context (<30K):**
+→ Use CURSOR_WINDSURF_PROMPT.txt (minimal)
+→ Or manually include only relevant sections
+
+---
+
+## 🔄 Updating Context During Development
+
+As your project evolves, update the system prompts:
+
+```bash
+# 1. Edit the relevant prompt file
+nano CURSOR_WINDSURF_PROMPT.txt
+
+# 2. Add new patterns, examples, or guidelines
+# For example, if you added a new agent:
+
+<new_agent>
+CoverLetterGenerator in agents/cover_letter_generator.py
+- Generates personalized cover letters
+- Uses job analysis + CV data
+- 250-300 words, professional tone
+</new_agent>
+
+# 3. Save and reload IDE or re-paste context
+```
+
+---
+
+## 🎓 Pro Tips for Maximum Productivity
+
+### Tip 1: Layer Your Context
+```
+Base layer: .cursorrules / .windsurfrules (always loaded)
+Session layer: Paste specific sections when needed
+Request layer: Reference specific files in your question
+```
+
+### Tip 2: Reference Specific Files
+```
+❌ "How do I improve the CV customization?"
+
+✅ "Looking at agents/cv_customizer.py, how can I improve 
+   the prompt in the customize() method to better match 
+   keywords from the job description?"
+```
+
+### Tip 3: Incremental Changes
+```
+Don't ask: "Rewrite the entire CV customizer"
+
+Instead: 
+1. "Improve the keyword matching logic"
+2. Test
+3. "Now improve the achievement quantification"
+4. Test
+5. Continue iterating
+```
+
+### Tip 4: Verify AI Understanding
+```
+After loading context, ask:
+"What are the three main agents in this project and 
+what does each one do?"
+
+If AI answers correctly → proceed
+If not → re-paste context or clarify
+```
+
+---
+
+## 🐛 Troubleshooting Context Issues
+
+### Issue: AI doesn't follow coding standards
+
+**Fix:**
+```
+Re-emphasize in your request:
+"Please follow the code standards from the system prompt, 
+including type hints, docstrings, and error handling."
+```
+
+### Issue: AI suggests non-production code
+
+**Fix:**
+```
+Add to your request:
+"Remember this is production code for an enterprise system. 
+Apply the validation checklist before suggesting."
+```
+
+### Issue: AI forgets project structure
+
+**Fix:**
+```
+Re-paste the <project_context> section from prompt, or
+Reference specific files: "In agents/job_analyzer.py, ..."
+```
+
+### Issue: Context too large, hitting limits
+
+**Fix:**
+```
+1. Use CURSOR_WINDSURF_PROMPT.txt (shortest version)
+2. Or manually extract only relevant sections
+3. For complex tasks, provide context in stages
+```
+
+---
+
+## 📈 Measuring Effectiveness
+
+Track how well the system prompt is working:
+
+**Good signs:**
+✅ AI suggests production-ready code first time
+✅ Proper error handling without being asked
+✅ Follows project structure automatically
+✅ Includes type hints and docstrings
+✅ Suggests testing approaches
+
+**Needs improvement:**
+❌ Bare except statements
+❌ Missing type hints
+❌ No docstrings
+❌ Doesn't follow project patterns
+❌ Generic error messages
+
+If you see ❌ signs → re-emphasize relevant sections of system prompt
+
+---
+
+## 🎯 Quick Reference: When to Use Each File
+
+**Use SYSTEM_PROMPT_FOR_IDE.md when:**
+- Starting the project
+- Learning the architecture deeply
+- Training a new team member
+- Need comprehensive reference
+
+**Use SYSTEM_PROMPT_QUICK.md when:**
+- Daily development
+- Quick feature additions
+- Bug fixes
+- Have basic project understanding
+
+**Use CURSOR_WINDSURF_PROMPT.txt when:**
+- Using Cursor or Windsurf specifically
+- Need fast context loading
+- Working on small changes
+- In a chat session
+
+---
+
+## 📞 Final Tips
+
+1. **Always start sessions with context** - Don't assume AI remembers
+2. **Re-emphasize critical parts** - Like error handling, type hints
+3. **Verify understanding** - Ask AI to explain approach before coding
+4. **Iterate incrementally** - Small changes, test, repeat
+5. **Update prompts** - As project evolves, keep prompts current
+
+---
+
+<p align="center">
+  <strong>With proper system prompts, your AI IDE becomes a senior engineer mentor! 🚀</strong>
+  <br><br>
+  <i>Use these prompts wisely, and watch your productivity soar.</i>
+</p>
+
+---
+
+## 🎁 Bonus: Custom Prompts for Specific Tasks
+
+Save these for common tasks:
+
+### Quick Bug Fix Prompt
+```
+Context: [paste SYSTEM_PROMPT_QUICK.md]
+
+I have a bug in [file]: [describe bug]
+
+Please:
+1. Analyze the issue
+2. Suggest a fix following our error handling patterns
+3. Add helpful error messages
+4. Include validation to prevent future issues
+```
+
+### Feature Addition Prompt
+```
+Context: [paste CURSOR_WINDSURF_PROMPT.txt]
+
+I want to add: [feature description]
+
+Please:
+1. Suggest where this fits in architecture
+2. Provide implementation following our patterns
+3. Include error handling and type hints
+4. Suggest testing approach
+```
+
+### Code Review Prompt
+```
+Context: [paste SYSTEM_PROMPT_QUICK.md]
+
+Please review this code against our standards:
+[paste code]
+
+Check:
+- Type hints
+- Error handling  
+- Docstrings
+- PEP 8
+- Production readiness
+```
+
+**Happy coding! 🎉**

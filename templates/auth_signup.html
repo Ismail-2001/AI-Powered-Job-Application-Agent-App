@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up | AI Job Application Agent</title>
+    <style>
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #EEF2FF; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .card { background: #fff; padding: 32px; border-radius: 16px; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15); width: 100%; max-width: 420px; }
+        h1 { margin: 0 0 8px; font-size: 24px; }
+        p { margin: 0 0 24px; color: #6B7280; font-size: 14px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; color: #374151; }
+        input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #D1D5DB; font-size: 14px; box-sizing: border-box; }
+        button { width: 100%; margin-top: 8px; padding: 10px 14px; border-radius: 999px; border: none; background: #4F46E5; color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; }
+        button:hover { background: #4338CA; }
+        .secondary { margin-top: 12px; text-align: center; font-size: 13px; }
+        .secondary a { color: #4F46E5; text-decoration: none; }
+        .flash { margin-bottom: 16px; padding: 10px 12px; border-radius: 8px; background: #FEF2F2; color: #DC2626; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Create your account</h1>
+        <p>Set up your workspace to generate customized CVs and cover letters.</p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <form method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Create Account</button>
+        </form>
+        <div class="secondary">
+            Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+        </div>
+    </div>
+</body>
+</html>
+
+{
+  "cells": [],
+  "metadata": {
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 2
+}
